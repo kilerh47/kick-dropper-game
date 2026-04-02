@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DOM Dropper</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <div id="viewport"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/8.3.0/pusher.min.js"></script>
+  <script type="text/javascript" src="config.js"></script>
+  <script type="text/javascript" src="code.js"></script>
+  <script type="text/javascript">
+    // Kick Kanal Bilgileri
+    const CHANNEL_NAME = 'beryybob'; // Buraya kendi kanal adınızı yazın
+    const COMMAND_DROP = '!atla';
+    const COMMAND_CUT = '!kes';
+    const PUSHER_KEY = '32cbd69e4b950bf97679';
+    const PUSHER_CLUSTER = 'us2';
+    const BOTS = new Set(['botrix', 'kickbot', 'livadbot', 'algochat']);
+
+    async function connectKick() {
+      try {
+        const res = await fetch(`https://kick.com/api/v1/channels/${CHANNEL_NAME}`);
+        if (!res.ok) throw new Error('Kanal bulunamadı: ' + CHANNEL_NAME);
+        const data = await res.json();
+        const chatroomId = data.chatroom?.id;
+        if (!chatroomId) throw new Error('Chatroom ID yok');
+
+        const pusher = new Pusher(PUSHER_KEY, {
+          cluster: PUSHER_CLUSTER, forceTLS: true,
+          enabledTransports: ['ws', 'wss']
+        });
+
+        const ch = pusher.subscribe(`chatrooms.${chatroomId}.v2`);
+        console.log("Kick bağlantısı başarılı: " + CHANNEL_NAME);
+
+        ch.bind('App\\Events\\ChatMessageEvent', msg => {
+          const user = msg.sender?.username;
+          const text = msg.content?.trim().toLowerCase();
+          if (!user || !text) return;
+          if (BOTS.has(user.toLowerCase())) return;
+
+          if (text.startsWith(COMMAND_DROP)) {
+            engine.drop(user);
+          } else if (text === COMMAND_CUT) {
+            engine.cut(user);
+          }
+        });
+
+      } catch (e) {
+        console.error('Kick bağlantı hatası:', e.message);
+      }
+    }
+
+    connectKick();
+  </script>
+</body>
+
+</html>
