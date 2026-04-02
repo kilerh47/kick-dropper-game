@@ -6,7 +6,7 @@ class Config {
     //
     // Setting this to 0 disables this feature, causing the game to run
     // continuously.
-    static IdleTime = 1000 * 60 * 1.5;
+    static IdleTime = 1000 * 30; // 30 saniye olarak güncellendi (Eski hali 1.5 dakikaydı)
 
     // If true, the user is allowed to trigger a cut of their parachute while
     // they are currently dropping. When cutting is turned on, the CutRange
