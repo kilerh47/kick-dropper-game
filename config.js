@@ -64,20 +64,20 @@ class Config {
     static ParachuteSound = "resources/sounds/parachute.ogg";
     static ParachutePlayback = [0.5, 2];
     static ParachutePitchPreserve = false;
-    static ParachuteVolume = 1.0;
+    static ParachuteVolume = 0.0;
 
     // The sound that plays when we cut the chute and start a free fall drop.
     static SnipSound = 'resources/sounds/snip.ogg';
     static SnipPlayback = [0.5, 2];
     static SnipPitchPreserve = false;
-    static SnipVolume = 1.0;
+    static SnipVolume = 0.0;
 
     // The sound that plays when someone requests to cut their chute, but their
     // dropper is below the threshold and they're not allowed to do so.
     static BuzzSound = 'resources/sounds/buzzer.ogg';
     static BuzzPlayback = [0.5, 2];
     static BuzzPitchPreserve = false;
-    static BuzzVolume = 1.0;
+    static BuzzVolume = 0.0;
 
     // The sound that plays when we eventually land. This is currently random
     // selected, but should probably be based on a selected terrain. There could
@@ -85,17 +85,17 @@ class Config {
     static LandSound = 'resources/sounds/snow.ogg';
     static LandPlayback = [0.5, 2];
     static LandPitchPreserve = false;
-    static LandVolume = 1.0;
+    static LandVolume = 0.0;
 
     // The sound that plays when this dropper actually lands on the target.
     static WinnerSound = "resources/sounds/whoopee.ogg";
     static WinnerPlayback = [0.75, 2];
     static WinnerPitchPreserve = false;
-    static WinnerVolume = 0.5;
+    static WinnerVolume = 0.0;
 
     // A wilhelm scream to be played randomly (and infrequently)
     static ScreamSound = "resources/sounds/wilhelm.ogg";
     static ScreamPlayback = [0.75, 2.0];
     static ScreamPitchPreserve = false;
-    static ScreamVolume = 1.0;
+    static ScreamVolume = 0.0;
 }
