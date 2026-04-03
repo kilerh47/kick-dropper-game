@@ -160,6 +160,7 @@ class Entity {
   /* Play the sound from the associated audio tag, optionally also setting the
    * volume level for the playback. */
   play(snd, volume, restart) {
+    return; // Sesler tamamen iptal edildi
     if (restart === true) {
       snd.currentTime = 0;
     }
@@ -168,7 +169,7 @@ class Entity {
       snd.volume = volume;
     }
 
-    snd.play();
+    // snd.play(); iptal edildi
   }
 
   /* Give this entity a chance to update its state, based on its own rules.
