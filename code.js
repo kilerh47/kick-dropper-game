@@ -908,6 +908,7 @@ class DropEngine {
     this.sprites.push(this.target);
 
     // High Score Girişi
+    this.leaderboardElement = document.getElementById('leaderboard');
     this.highScores = this.loadHighScores();
     this.updateLeaderboardUI();
   }
@@ -933,6 +934,11 @@ class DropEngine {
     this.target.element.classList.remove('ghost', 'fadeOut');
     this.target.element.classList.add('fadeIn');
     this.target.setFrame(this.target.sheet.randomFrame());
+
+    if (this.leaderboardElement) {
+      this.leaderboardElement.classList.remove('ghost', 'fadeOut');
+      this.leaderboardElement.classList.add('fadeIn');
+    }
 
     // When the loop starts the game is fresh, so make sure there's no winner.
     this.target.winner = null;
@@ -965,6 +971,12 @@ class DropEngine {
 
     this.target.element.classList.add('ghost', 'fadeOut');
     this.target.element.classList.remove('fadeIn');
+
+    if (this.leaderboardElement) {
+      this.leaderboardElement.classList.add('ghost', 'fadeOut');
+      this.leaderboardElement.classList.remove('fadeIn');
+    }
+
     this.running = false;
   }
 
@@ -989,6 +1001,11 @@ class DropEngine {
       <div class="lobby-participants" id="lobby-participants">Katılmak için chat'e !atla yazın! 👇</div>
     `;
     this.viewport.appendChild(this.lobbyElement);
+
+    // Lobi başladığında eğer render loop durmuşsa çalıştır
+    if (!this.running) {
+      this.startRenderLoop();
+    }
   }
 
   /* Handles counting down the lobby time and updating the progress bar */
@@ -1381,7 +1398,7 @@ class DropEngine {
 
       const scoreSpan = document.createElement('span');
       scoreSpan.className = 'leaderboard-score';
-      scoreSpan.innerText = `${item.score.toFixed(1)}%`;
+      scoreSpan.innerText = `${item.score.toFixed(1)}`;
 
       row.appendChild(rankBadge);
       row.appendChild(nameSpan);
