@@ -302,7 +302,7 @@ div {
   /*border: 1px dashed red;*/
   background-image: url(resources/images/target.png);
   width:  390px;
-  height: 110px;
+  height: 150px;
   z-index: -10;
 }
 

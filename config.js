@@ -47,7 +47,7 @@ class Config {
     ////////////////////////////////////////////////////////////////////////////
     static EmoteSpriteInfo = [280, 224, 20];
     static ParachuteSpriteInfo = [360, 360, 9];
-    static TargetSpriteInfo = [390, 110, 1];
+    static TargetSpriteInfo = [390, 150, 1];
 
 
     ////////////////////////////////////////////////////////////////////////////

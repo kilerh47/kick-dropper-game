@@ -733,10 +733,11 @@ class ParachuteDropper extends SpriteContainer {
     if (emoteY >= this.container.clientHeight - this.emote.height - (0.25 * this.target.height)) {
       this.land(deltaT);
 
-      // In order to be considered a winner, the emote has to land so that at
-      // least one pixel of it's bounding box is touching on the left or the
-      // right side of the bounding box of the target.
-      if (emoteX > this.target.x - this.emote.width && emoteX < this.target.x + this.target.width) {
+      // In order to be considered a winner, the emote's center must land
+      // within the safe padding boundaries of the target dog bed.
+      const padding = 30;
+      const emoteMidX = emoteX + this.emote.width / 2;
+      if (emoteMidX >= this.target.x + padding && emoteMidX <= this.target.x + this.target.width - padding) {
         this.handleWin();
       } else {
         this.handleLose();
@@ -810,11 +811,6 @@ class ParachuteDropper extends SpriteContainer {
     this.nameBox.element.classList.toggle('ghost');
   }
 
-  /* Calculate the score for a particular dropper.
-   *
-   * This assumes that the dropper has landed at the bottom of the screen and
-   * that its position has been calculated such that we know that it's
-   * definitely a winner. */
   score() {
     // Calculate the positions that are the center of the target and the center
     // of the emote; note that the emote is relative to our bounding box.
@@ -822,13 +818,14 @@ class ParachuteDropper extends SpriteContainer {
     const midEmote = this.x + this.emote.x + (this.emote.width / 2);
 
     // The maximum possible distance apart that the emote and the center of the
-    // target can be if this is a winner.
-    const maxDist = (this.target.width / 2) + (this.emote.width / 2);
+    // target can be under the new 30px safety padded boundary.
+    const padding = 30;
+    const maxDist = (this.target.width / 2) - padding;
 
     // Calculate the score as a percentage of how far apart the two values are
-    // from each other. This gives a score of 100 at the center an almost zero
-    // score on the edges.
-    return 100 - ((Math.abs(midTarget - midEmote) / maxDist) * 100.0);
+    // from each other. Limit to a minimum score of 0.
+    const scoreVal = 100 - ((Math.abs(midTarget - midEmote) / maxDist) * 100.0);
+    return Math.max(0, scoreVal);
   }
 }
 
@@ -895,7 +892,7 @@ class DropEngine {
     // Create the sprite sheets for our test emotes and the parachute sprites.
     this.emoteSheet = new SpriteSheet('emote', Config.EmoteSpriteInfo, 56, 56);
     this.parachuteSheet = new SpriteSheet('parachute', Config.ParachuteSpriteInfo, 120, 120);
-    this.targetSheet = new SpriteSheet('target', Config.TargetSpriteInfo, 390, 110);
+    this.targetSheet = new SpriteSheet('target', Config.TargetSpriteInfo, 390, 150);
 
     // Create the target that the droppers are aiming for.
     this.target = new Target(this.viewport, this.targetSheet);
