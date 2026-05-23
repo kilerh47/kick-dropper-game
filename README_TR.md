@@ -28,8 +28,19 @@ Yayın akışını yönetmek ve chati trolleme/destekleme dinamiklerini kontrol 
 | **`!topluatla`** | Ekranın üst ortasında **20 saniyelik Battle Royale Lobisini** ve sayacı başlatır. Lobi açıkken chatin `!atla` yazarak sıraya girmesi istenir. | **Yayıncı & Modlar** |
 | **`!kes @kullanıcı`** | Havada süzülen belirli bir izleyicinin paraşüt ipini sabote ederek/yardımcı olarak anında keser! *(Örn: `!kes @kilerh47`)* | **Yayıncı & Modlar** |
 | **`!rastgelekes`** | Havada süzülen aktif oyunculardan **rastgele birinin** ipini kesip onu terminal hızda aşağı fırlatır! (Muazzam bir troll komutudur). | **Yayıncı & Modlar** |
+| **`!skorsifirla`** | LocalStorage'da kayıtlı olan tüm zamanların en yüksek skorlarını sıfırlar. Yeni bir yayın gününde skorları sıfırdan başlatmak için idealdir. | **Yayıncı & Modlar** |
 
 💡 **NOT:** İnsan moderatörlerinizin (örneğin `aybuu`, `bigfiggings` veya `tiriviri`) bu yetkili komutları kullanabilmesi için yetkilendirmek isterseniz, `index.html` dosyası içindeki `MODERATORS` listesine kullanıcı adlarını küçük harflerle eklemeniz yeterlidir.
+
+---
+
+## 🏆 Canlı Skor Tablosu (Persistent Leaderboard)
+
+Oyun, hedefe en iyi iniş yapan **En İyi 5 Oyuncunun (All-Time Top 5)** skorlarını ekranın sağ üst köşesinde bulunan şık ve yarı transparan (glassmorphic) bir kartta canlı olarak listeler.
+
+* **Kalıcı Depolama (LocalStorage):** Skorlar tarayıcının yerel hafızasında saklanır. OBS Studio kapatılsa veya bilgisayar yeniden başlatılsa bile, tarayıcı kaynağı önbelleği sıfırlanmadığı sürece skorlar kalıcı kalır.
+* **Kişisel En İyi Skor:** Bir oyuncu birden fazla iniş yaptığında, skor tablosundaki değeri sadece kendi kişisel rekorunu (en yüksek derecesini) kırdığında güncellenir.
+* **Şampiyon Vurgusu:** Birinci sıradaki (1st) oyuncu altın renkli bir taç (`👑`) ile listelenir ve satırı tatlı bir parıltı efektiyle vurgulanır. İkincilik (2nd) gümüş, üçüncülük (3rd) ise bronz renklerle belirtilir.
 
 ---
 

@@ -17,7 +17,16 @@
     <button id="btn-add-lobby">Lobiye 5 Kişi Ekle</button>
     <button id="btn-force-drop">Toplu Atlat!</button>
     <button id="btn-simulate-cut">Rastgele İp Kes (!kes)</button>
+    <button id="btn-clear-scores" style="background-color: #8b3c3c !important;">Skorları Sıfırla</button>
     <button id="btn-clear-all">Temizle (Reset)</button>
+  </div>
+
+  <!-- Canlı Liderlik Tablosu Kartı -->
+  <div id="leaderboard" class="leaderboard-card">
+    <div class="leaderboard-header">🏆 EN İYİ İNİŞLER</div>
+    <div id="leaderboard-list" class="leaderboard-list">
+      <div class="leaderboard-empty">Henüz iniş yapılmadı</div>
+    </div>
   </div>
 
   <div id="viewport"></div>
@@ -70,7 +79,11 @@
           // Yetki kontrolü (Yayıncı veya Tanımlı Moderatörler)
           const isAuthorized = (user.toLowerCase() === CHANNEL_NAME.toLowerCase()) || MODERATORS.has(user.toLowerCase());
 
-          if (text.startsWith(COMMAND_LOBBY)) {
+          if (text.startsWith('!skorsifirla')) {
+            if (isAuthorized) {
+              engine.clearHighScores();
+            }
+          } else if (text.startsWith(COMMAND_LOBBY)) {
             // !topluatla: Sadece yetkililer başlatabilir
             if (!engine.lobbyActive && isAuthorized) {
               engine.startLobby();
@@ -132,6 +145,10 @@
 
     document.getElementById('btn-clear-all').addEventListener('click', () => {
       engine.stopRenderLoop();
+    });
+
+    document.getElementById('btn-clear-scores').addEventListener('click', () => {
+      engine.clearHighScores();
     });
   </script>
 </body>

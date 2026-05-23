@@ -797,6 +797,9 @@ class ParachuteDropper extends SpriteContainer {
     // Tell the target that we landed on that we've landed on it, so that it's
     // logic will fire.
     this.target.addDropper(this);
+
+    // Record high score
+    engine.recordHighScore(this.name, this.dropScore);
   }
 
   /* Mark the dropper as a loser. This sets up the appropriate internal state
@@ -903,6 +906,10 @@ class DropEngine {
     this.target.element.classList.add('ghost');
 
     this.sprites.push(this.target);
+
+    // High Score Girişi
+    this.highScores = this.loadHighScores();
+    this.updateLeaderboardUI();
   }
 
   /* Every time this is called, the target is randomly positioned on the screen,
@@ -1273,6 +1280,114 @@ class DropEngine {
     } else {
       this.idleTime = 0;
     }
+  }
+
+  loadHighScores() {
+    try {
+      const stored = localStorage.getItem('kick_dropper_highscores');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error('Liderlik tablosu yüklenirken hata oluştu:', e);
+      return [];
+    }
+  }
+
+  saveHighScores() {
+    try {
+      localStorage.setItem('kick_dropper_highscores', JSON.stringify(this.highScores));
+    } catch (e) {
+      console.error('Liderlik tablosu kaydedilirken hata oluştu:', e);
+    }
+  }
+
+  recordHighScore(name, score) {
+    if (!name) return;
+    
+    const cleanName = name.trim();
+    const cleanScore = parseFloat(score);
+    if (isNaN(cleanScore)) return;
+
+    // Listede oyuncunun kaydı var mı kontrol et (Büyük/küçük harf duyarsız)
+    const existingIndex = this.highScores.findIndex(h => h.name.toLowerCase() === cleanName.toLowerCase());
+    
+    if (existingIndex !== -1) {
+      // Sadece yeni skor eskisinden yüksekse güncelle (Kişisel En İyi)
+      if (cleanScore > this.highScores[existingIndex].score) {
+        this.highScores[existingIndex].score = cleanScore;
+        this.highScores[existingIndex].name = cleanName; // İsmin yazımını güncelle
+        this.highScores[existingIndex].date = new Date().toISOString();
+      } else {
+        return;
+      }
+    } else {
+      // Yeni kayıt ekle
+      this.highScores.push({
+        name: cleanName,
+        score: cleanScore,
+        date: new Date().toISOString()
+      });
+    }
+
+    // Yüksekten düşüğe sırala
+    this.highScores.sort((a, b) => b.score - a.score);
+
+    // Limit 100 skoru sakla
+    if (this.highScores.length > 100) {
+      this.highScores = this.highScores.slice(0, 100);
+    }
+
+    this.saveHighScores();
+    this.updateLeaderboardUI();
+  }
+
+  clearHighScores() {
+    this.highScores = [];
+    this.saveHighScores();
+    this.updateLeaderboardUI();
+  }
+
+  updateLeaderboardUI() {
+    const listElement = document.getElementById('leaderboard-list');
+    if (!listElement) return;
+
+    listElement.innerHTML = '';
+
+    const topScores = this.highScores.slice(0, 5);
+
+    if (topScores.length === 0) {
+      const emptyRow = document.createElement('div');
+      emptyRow.className = 'leaderboard-empty';
+      emptyRow.innerText = 'Henüz iniş yapılmadı';
+      listElement.appendChild(emptyRow);
+      return;
+    }
+
+    topScores.forEach((item, index) => {
+      const row = document.createElement('div');
+      row.className = 'leaderboard-row';
+      if (index === 0) row.classList.add('rank-first');
+
+      const rankBadge = document.createElement('span');
+      rankBadge.className = `leaderboard-rank rank-${index + 1}`;
+      rankBadge.innerText = index + 1;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'leaderboard-name';
+      if (index === 0) {
+        nameSpan.innerHTML = `👑 ${item.name}`;
+      } else {
+        nameSpan.innerText = item.name;
+      }
+
+      const scoreSpan = document.createElement('span');
+      scoreSpan.className = 'leaderboard-score';
+      scoreSpan.innerText = `${item.score.toFixed(1)}%`;
+
+      row.appendChild(rankBadge);
+      row.appendChild(nameSpan);
+      row.appendChild(scoreSpan);
+      listElement.appendChild(row);
+    });
   }
 }
 
