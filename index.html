@@ -39,6 +39,7 @@
     const COMMAND_DROP = '!atla';
     const COMMAND_CUT = '!kes';
     const COMMAND_LOBBY = '!topluatla'; // Yeni Battle Royale başlatma komutu
+    const COMMAND_RANDOM_CUT = '!rastgelekes'; // Yeni rastgele ip kesme komutu
     const PUSHER_KEY = '32cbd69e4b950bf97679';
     const PUSHER_CLUSTER = 'us2';
     const BOTS = new Set(['botrix', 'kickbot', 'livadbot', 'algochat']);
@@ -65,14 +66,33 @@
           if (!user || !text) return;
           if (BOTS.has(user.toLowerCase())) return;
 
+          // Yetki kontrolü (Yayıncı veya Moderatör Botlar)
+          const isAuthorized = (user.toLowerCase() === CHANNEL_NAME.toLowerCase()) || BOTS.has(user.toLowerCase());
+
           if (text.startsWith(COMMAND_LOBBY)) {
-            if (!engine.lobbyActive) {
+            // !topluatla: Sadece yetkililer başlatabilir
+            if (!engine.lobbyActive && isAuthorized) {
               engine.startLobby();
             }
           } else if (text.startsWith(COMMAND_DROP)) {
             engine.drop(user);
-          } else if (text === COMMAND_CUT) {
-            engine.cut(user);
+          } else if (text.startsWith(COMMAND_RANDOM_CUT)) {
+            // !rastgelekes: Sadece yetkililer tetikleyebilir, havada uçan rastgele birinin ipini keser
+            if (isAuthorized) {
+              engine.cutRandom();
+            }
+          } else if (text.startsWith(COMMAND_CUT)) {
+            // !kes [kullanici] veya !kes
+            const parts = msg.content?.trim().split(/\s+/);
+            if (parts.length > 1 && isAuthorized) {
+              const targetUser = parts[1].replace('@', '').trim();
+              if (targetUser) {
+                engine.cut(targetUser);
+              }
+            } else {
+              // Normal izleyici ise veya parametre yoksa sadece kendininkini keser
+              engine.cut(user);
+            }
           }
         });
 

@@ -1198,6 +1198,20 @@ class DropEngine {
     }
   }
 
+  /* Selects a random active dropper currently in the air (not landed and not already cut)
+   * and cuts their parachute. This is an exclusive power for the streamer/mods. */
+  cutRandom() {
+    if (Config.CutAllowed === false || this.running === false) {
+      return;
+    }
+
+    const activeDroppers = this.sprites.filter(s => s instanceof ParachuteDropper && !s.landed && !s.cutRequested);
+    if (activeDroppers.length > 0) {
+      const randomDropper = activeDroppers[Math.floor(Math.random() * activeDroppers.length)];
+      return randomDropper.cut_chute();
+    }
+  }
+
   /* If there is currently a dropper with the name provided sitting on the
    * target, then this will make that dropper abdicate their throne (i.e. they
    * get marked as a Loser), allowing them to play again. */
