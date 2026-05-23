@@ -310,36 +310,259 @@ div {
  * is associated with a dropper while it's falling, or while it's marked as a
  * winner on the target. */
 .nickname {
-  /*border: 1px dashed purple;*/
-
-  /* Arial, Bangers, Furore, Pricedown, Raleway, Roboto */
   font-family: 'Righteous', cursive;
-  color: darkorange;
-  font-size: 24px;
-  text-shadow: 3px 4px 5px darkslategrey;
-
+  color: #ffcbdb; /* Senin pemben */
+  font-size: 16px;
+  text-shadow: 2px 2px 0px #674746; /* Luna Koyu kahve gölge */
   text-align: center;
   vertical-align: middle;
   line-height: 24px;
-
-  height:  24px;
+  height: 26px;
   width: 350px;
+  
+  /* Modern Soft Glassmorphism */
+  max-width: 180px;
+  margin: 0 auto;
+  background: rgba(103, 71, 70, 0.75); /* Luna Koyu kahve arka plan */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid #ffcbdb;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(103, 71, 70, 0.3);
+  box-sizing: border-box;
+  padding: 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* This class is applied to the dic that is used to hold the visible score that
  * a dropper gets when it lands sucessfully on the target. */
 .score {
-  /*border: 1px dashed purple;*/
-
   font-family: 'Righteous', cursive;
-  color: white;
-  font-size: 18px;
-  text-shadow: 3px 4px 5px darkslategrey;
-
+  color: #FFD9D1; /* Açık pastel krem */
+  font-size: 13px;
+  text-shadow: 1px 1px 0px #674746;
   text-align: center;
   vertical-align: middle;
   line-height: 18px;
-
-  height: 18px;
+  height: 20px;
   width: 80px;
+  
+  /* Modern Soft Glassmorphism */
+  max-width: 80px;
+  margin: 0 auto;
+  background: rgba(103, 71, 70, 0.9);
+  border: 1px solid #fbc0b4;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   DEVELOPER TEST PANEL
+   ========================================================================== */
+#test-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(103, 71, 70, 0.9);
+  backdrop-filter: blur(5px);
+  border: 1px solid #b4867d;
+  border-radius: 12px;
+  padding: 12px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 200px;
+  box-shadow: 0 10px 30px rgba(103, 71, 70, 0.4);
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+
+#test-panel:hover {
+  opacity: 1.0;
+}
+
+/* Overlapping Prevention FIX */
+#test-panel div, #test-panel span, #test-panel h3, #test-panel button,
+.lobby-status-bar div, .lobby-status-bar span, .lobby-status-bar p, .lobby-status-bar h2 {
+  position: relative !important;
+}
+
+#test-panel h3 {
+  margin: 0 0 6px 0;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #ffcbdb;
+  text-align: center;
+  font-weight: bold;
+}
+
+#test-panel button {
+  background: #b4867d;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#test-panel button:hover {
+  background: #ffcbdb;
+  color: #674746;
+}
+
+#test-panel button:active {
+  transform: scale(0.95);
+}
+
+/* ==========================================================================
+   BATTLE ROYALE LOBBY UI
+   ========================================================================== */
+.lobby-status-bar {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(103, 71, 70, 0.85); /* Luna koyu kahve */
+  backdrop-filter: blur(8px);
+  border: 2px solid #ffcbdb; /* Senin pemben */
+  box-shadow: 0 0 25px rgba(180, 134, 125, 0.4);
+  border-radius: 16px;
+  padding: 14px 24px;
+  width: 450px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  animation: barSlideIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes barSlideIn {
+  0% { transform: translate(-50%, -100px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.lobby-title {
+  font-family: 'Righteous', cursive;
+  font-size: 20px;
+  color: #ffcbdb; /* Senin pemben */
+  text-shadow: 2px 2px 0px #674746;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.lobby-timer-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 2px 0;
+}
+
+.lobby-timer-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ffcbdb, #fbc0b4); /* Pembe -> Şeftali */
+  box-shadow: 0 0 8px rgba(255, 203, 219, 0.8);
+  transition: width 0.1s linear;
+}
+
+.lobby-info {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #FFD9D1; /* Açık pastel */
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: bold;
+}
+
+.lobby-participants {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  color: #fbc0b4; /* Luna Şeftali */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   LANDING IMPACT EFFECTS (SPLASH / DUST)
+   ========================================================================== */
+.impact-particle {
+  position: absolute;
+  width: 120px;
+  height: 40px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.impact-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 5px;
+  border: 2px solid #ffcbdb;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ringExpand 0.4s ease-out forwards;
+}
+
+.impact-dust {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #FFD9D1;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fbc0b4;
+  transform: translate(-50%, -50%);
+}
+
+/* Multi-dust animations */
+.impact-dust:nth-child(2) { animation: dustFloatLeft 0.4s ease-out forwards; }
+.impact-dust:nth-child(3) { animation: dustFloatRight 0.4s ease-out forwards; }
+.impact-dust:nth-child(4) { animation: dustFloatUpLeft 0.4s ease-out forwards; }
+.impact-dust:nth-child(5) { animation: dustFloatUpRight 0.4s ease-out forwards; }
+
+@keyframes ringExpand {
+  0% { width: 10px; height: 5px; opacity: 1; border-color: #ffcbdb; }
+  100% { width: 100px; height: 35px; opacity: 0; border-color: rgba(243, 183, 171, 0); }
+}
+
+@keyframes dustFloatLeft {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-45px, -15px) scale(0.2); opacity: 0; }
+}
+
+@keyframes dustFloatRight {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(45px, -15px) scale(0.2); opacity: 0; }
+}
+
+@keyframes dustFloatUpLeft {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-25px, -35px) scale(0.2); opacity: 0; }
+}
+
+@keyframes dustFloatUpRight {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(25px, -35px) scale(0.2); opacity: 0; }
 }

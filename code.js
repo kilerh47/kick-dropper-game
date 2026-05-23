@@ -664,6 +664,10 @@ class ParachuteDropper extends SpriteContainer {
     this.landed = true;
     this.play(this.sndLand, Config.LandVolume);
 
+    // Trigger visual landing impact splash
+    const emoteX = this.x + this.emote.x;
+    engine.spawnImpact(emoteX + this.emote.width / 2, this.container.clientHeight - (0.25 * this.target.height));
+
     // Now that we have landed, we should no longer sway, and our parachute
     // should no longer be visible.
     this.element.classList.remove('sway');
@@ -856,6 +860,13 @@ class DropEngine {
     this.viewport = document.getElementById('viewport');
     this.button = document.getElementById('button');
 
+    // Lobi Değişkenleri
+    this.lobbyActive = false;
+    this.lobbyTimer = 0;
+    this.lobbyDuration = 20000; // 20 saniye lobi süresi
+    this.lobbyQueue = [];
+    this.lobbyElement = null;
+
     // The list of sprites that we're updating.
     this.sprites = [];
 
@@ -937,9 +948,138 @@ class DropEngine {
     }
     this.target.droppers = [];
 
+    // Clean up lobby if it is running
+    if (this.lobbyActive && this.lobbyElement) {
+      this.viewport.removeChild(this.lobbyElement);
+      this.lobbyElement = null;
+    }
+    this.lobbyActive = false;
+    this.lobbyQueue = [];
+
     this.target.element.classList.add('ghost', 'fadeOut');
     this.target.element.classList.remove('fadeIn');
     this.running = false;
+  }
+
+  /* Starts the Battle Royale lobby countdown and updates UI */
+  startLobby() {
+    this.lobbyActive = true;
+    this.lobbyTimer = this.lobbyDuration;
+    this.lobbyQueue = [];
+    
+    // Create UI elements
+    this.lobbyElement = document.createElement('div');
+    this.lobbyElement.className = 'lobby-status-bar';
+    this.lobbyElement.innerHTML = `
+      <div class="lobby-title">BATTLE ROYALE LOBİSİ</div>
+      <div class="lobby-timer-container">
+        <div class="lobby-timer-bar" id="lobby-timer-bar"></div>
+      </div>
+      <div class="lobby-info">
+        <span id="lobby-status-text">Atlamayan Kalmasın! 🪂</span>
+        <span id="lobby-count-text">Katılan: 0</span>
+      </div>
+      <div class="lobby-participants" id="lobby-participants">Katılmak için chat'e !atla yazın! 👇</div>
+    `;
+    this.viewport.appendChild(this.lobbyElement);
+  }
+
+  /* Handles counting down the lobby time and updating the progress bar */
+  tickLobby(deltaT) {
+    if (this.lobbyActive === false) return;
+
+    this.lobbyTimer -= deltaT;
+    
+    const bar = document.getElementById('lobby-timer-bar');
+    const statusText = document.getElementById('lobby-status-text');
+    
+    if (bar) {
+      const percentage = Math.max(0, (this.lobbyTimer / this.lobbyDuration) * 100);
+      bar.style.width = percentage + '%';
+    }
+    
+    if (statusText) {
+      const remainingSeconds = Math.max(0, Math.ceil(this.lobbyTimer / 1000));
+      statusText.innerText = `Atlamaya son: ${remainingSeconds}s`;
+    }
+
+    if (this.lobbyTimer <= 0) {
+      this.startSimultaneousDrop();
+    }
+  }
+
+  /* Updates the lobby UI list with current participant names */
+  updateLobbyUI() {
+    if (this.lobbyActive === false || !this.lobbyElement) return;
+
+    const countText = document.getElementById('lobby-count-text');
+    const participants = document.getElementById('lobby-participants');
+
+    if (countText) {
+      countText.innerText = `Katılan: ${this.lobbyQueue.length}`;
+    }
+
+    if (participants) {
+      if (this.lobbyQueue.length === 0) {
+        participants.innerText = "Katılmak için chat'e !atla yazın! 👇";
+      } else {
+        const names = this.lobbyQueue.map(p => p.name).join(', ');
+        participants.innerText = names;
+      }
+    }
+  }
+
+  /* Ends the lobby and launches all queued participants at once */
+  startSimultaneousDrop() {
+    this.lobbyActive = false;
+
+    // Remove UI
+    if (this.lobbyElement) {
+      if (this.lobbyElement.parentNode === this.viewport) {
+        this.viewport.removeChild(this.lobbyElement);
+      }
+      this.lobbyElement = null;
+    }
+
+    // Launch all droppers in queue!
+    const queue = [...this.lobbyQueue];
+    this.lobbyQueue = [];
+
+    // Trigger drops with a micro-stagger (e.g. 50ms) to ensure physics engine separates them slightly
+    queue.forEach((player, index) => {
+      setTimeout(() => {
+        this.dropDirectly(player.name, player.emoteId);
+      }, index * 50);
+    });
+  }
+
+  /* Spawns an animated dust/splash impact particle effect at coordinate x, y */
+  spawnImpact(x, y) {
+    const particle = document.createElement('div');
+    particle.className = 'impact-particle';
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+
+    // Create central expanding ring
+    const ring = document.createElement('div');
+    ring.className = 'impact-ring';
+    particle.appendChild(ring);
+
+    // Create 4 floating dust chunks
+    for (let i = 0; i < 4; i++) {
+      const dust = document.createElement('div');
+      dust.className = 'impact-dust';
+      particle.appendChild(dust);
+    }
+
+    this.viewport.appendChild(particle);
+
+    // Self-destruct after animation completes
+    setTimeout(() => {
+      if (particle.parentNode === this.viewport) {
+        this.viewport.removeChild(particle);
+      }
+    }, 450);
   }
 
   /* Bump the internal tracking number that is added to the names of droppers;
@@ -950,28 +1090,44 @@ class DropEngine {
   }
 
   /* Create and drop a parachute dropper in the viewport, using the given
-   * name, or a placeholder name if one is not provided. */
+   * name, or a placeholder name if one is not provided. Under the Battle Royale
+   * system, this queues the user into the lobby first. */
   drop(name, emoteId) {
+    name = name || 'SampleNickGoesHere' + this.nameSuffix;
+
     // We're about to drop; if the render loop isn't already running, then we
     // should start it now.
     if (this.running === false) {
       this.startRenderLoop();
     }
 
-    name = name || 'SampleNickGoesHere' + this.nameSuffix;
-
-    // if (Utils.randomFloatInRange(0, 1) >= 0.5) {
-    //   emoteId = '306898610';
-    // }
-
-    // Scan existing droppers to see if there's one with this name. If there is,
-    // then this user is not allowed to drop again, so leave.
+    // Check if the user is already actively dropping
     for (let i = 0 ; i < this.sprites.length ; i++) {
       if (this.sprites[i].name === name) {
         return;
       }
     }
 
+    // Check if the user is already in the lobby queue
+    for (let i = 0 ; i < this.lobbyQueue.length ; i++) {
+      if (this.lobbyQueue[i].name === name) {
+        return;
+      }
+    }
+
+    // If lobby is active, add to lobby queue
+    if (this.lobbyActive === true) {
+      this.lobbyQueue.push({ name, emoteId });
+      this.updateLobbyUI();
+    } else {
+      // If lobby is NOT active, drop classic style immediately!
+      this.dropDirectly(name, emoteId);
+    }
+  }
+
+  /* Performs the actual dropping of a character in the game, bypassing the lobby.
+   * This is invoked when the lobby timer fires and all participants skydive together. */
+  dropDirectly(name, emoteId) {
     // Try to get a dropper out of the pool.
     let dropper = EntityPool.get();
     if (dropper === undefined) {
@@ -982,7 +1138,7 @@ class DropEngine {
       dropper.display();
     }
 
-    if (emoteId !== undefined) {
+    if (emoteId !== undefined && emoteId !== null) {
       // For an emote ID, we need to make sure that the standard emote class is
       // gone and that the custom twitch one is applied.
       dropper.emote.element.classList.remove('emote');
@@ -1053,8 +1209,6 @@ class DropEngine {
     this.target.abdicateDropper(name || 'SampleNickGoesHere' + this.nameSuffix);
   }
 
-  /* Render this frame; this will keep calling itself in a loop as long as the
-   * animation should be running. */
   renderLoop() {
     this.lastFrameTime = this.thisFrameTime;
     this.thisFrameTime = new Date().getTime();
@@ -1064,6 +1218,11 @@ class DropEngine {
 
     if (this.elapsedTime >= 1000) {
       this.elapsedTime -= 1000;
+    }
+
+    // Tick the lobby countdown if active
+    if (this.lobbyActive === true) {
+      this.tickLobby(deltaT);
     }
 
     // If we have been idle for an appropriate period of time, then stop the
