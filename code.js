@@ -256,6 +256,11 @@ class Target extends Sprite {
 
     // The droppers that are currently sitting on the target.
     this.droppers = [];
+
+    // Yatak süsü (sallanan oyuncak kemik) divini oluştur ve ekle
+    this.boneToy = document.createElement("div");
+    this.boneToy.className = "target-bone-toy";
+    this.element.appendChild(this.boneToy);
   }
 
   /* Add to the list of droppers that are currently sitting on top of the
@@ -276,6 +281,11 @@ class Target extends Sprite {
     // dropper on the target and that it's a winner.
     dropper.play(dropper.sndWinner, Config.WinnerVolume);
     dropper.transmitDropStatus(true, true);
+
+    // Şampiyon tacını göster
+    if (dropper.winnerCrown) {
+      dropper.winnerCrown.classList.remove('ghost');
+    }
   }
 
   /* This dropper landed on the target, but is technically a loser because there
@@ -375,6 +385,11 @@ class ParachuteDropper extends SpriteContainer {
     this.nameBox = new SpriteContainer(this.element, 'nickname');
     this.scoreBox = new SpriteContainer(this.element, 'score');
 
+    // Şampiyon tacı (altın-krem kemikli taç) divini oluştur ve ekle
+    this.winnerCrown = document.createElement("div");
+    this.winnerCrown.className = "winner-crown ghost"; // Başlangıçta gizli
+    this.element.appendChild(this.winnerCrown);
+
 
     // Set the emote position offset so that it appears centered under the
     // parachute. It's horizontally centered and vertically 1/4 of it's own height
@@ -471,6 +486,11 @@ class ParachuteDropper extends SpriteContainer {
    * This is invoked from the constructor to randomize positions, but will also
    * be called when we get pulled out of the sprite pool and re-used. */
   randomize(name) {
+    // Şampiyon tacını gizle
+    if (this.winnerCrown) {
+      this.winnerCrown.classList.add('ghost');
+    }
+
     // Ensure that the parachute is hidden until it gets deployed.
     this.parachute.element.classList.add('ghost');
     this.parachute.element.classList.remove('releaseChute');
@@ -809,6 +829,11 @@ class ParachuteDropper extends SpriteContainer {
     this.winner = false;
     this.element.classList.toggle('loser');
     this.nameBox.element.classList.toggle('ghost');
+
+    // Tacı gizle
+    if (this.winnerCrown) {
+      this.winnerCrown.classList.add('ghost');
+    }
   }
 
   score() {
