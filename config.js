@@ -28,6 +28,17 @@ class Config {
     static AbdicateAllowed = true;
 
     ////////////////////////////////////////////////////////////////////////////
+    // THEME CONFIGURATION                                                    //
+    ////////////////////////////////////////////////////////////////////////////
+    static get currentTheme() {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('theme') || 'classic';
+        }
+        return 'classic';
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     // IMAGE CONFIGURATION                                                    //
     ////////////////////////////////////////////////////////////////////////////
     //
@@ -47,7 +58,10 @@ class Config {
     ////////////////////////////////////////////////////////////////////////////
     static EmoteSpriteInfo = [280, 224, 20];
     static ParachuteSpriteInfo = [360, 360, 9];
-    static TargetSpriteInfo = [390, 150, 1];
+    
+    static get TargetSpriteInfo() {
+        return this.currentTheme === 'dog' ? [390, 150, 1] : [390, 110, 1];
+    }
 
 
 

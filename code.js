@@ -1161,8 +1161,12 @@ class DropEngine {
       // position might be wrong.
       dropper.emote.setFrame(0);
 
-      // Twitch emotes should not get the sacred Chihuahua angel wings, select from the other 6.
-      dropper.parachute.setFrame(Utils.randomIntInRange(3, 8));
+      if (Config.currentTheme === 'dog') {
+        // Twitch emotes should not get the sacred Chihuahua angel wings, select from the other 6.
+        dropper.parachute.setFrame(Utils.randomIntInRange(3, 8));
+      } else {
+        dropper.parachute.setFrame(dropper.parachute.sheet.randomFrame());
+      }
     } else {
       // For no emote ID, ensure that we have the appropriate standard emote
       // class applied. We also need to select a frame.
@@ -1173,23 +1177,27 @@ class DropEngine {
       // a random emote picked.
       dropper.emote.element.style.backgroundImage = null;
 
-      // Choose a standard dog emote frame
+      // Choose a standard emote frame
       const randomEmoteFrame = dropper.emote.sheet.randomFrame();
       dropper.emote.setFrame(randomEmoteFrame);
 
-      // Dynamic parachute frame assignment based on specific dog breed frame ranges
-      let parachuteFrame = 0;
-      if (randomEmoteFrame <= 5) {
-        // Chihuahua (Frames 0-5) -> Angel-themed parachutes (Frames 0, 1, 2)
-        parachuteFrame = Utils.randomIntInRange(0, 2);
-      } else if (randomEmoteFrame <= 13) {
-        // Maltese (Frames 6-13) -> Red-bow parachutes (Frames 3, 4, 5)
-        parachuteFrame = Utils.randomIntInRange(3, 5);
+      if (Config.currentTheme === 'dog') {
+        // Dynamic parachute frame assignment based on specific dog breed frame ranges
+        let parachuteFrame = 0;
+        if (randomEmoteFrame <= 5) {
+          // Chihuahua (Frames 0-5) -> Angel-themed parachutes (Frames 0, 1, 2)
+          parachuteFrame = Utils.randomIntInRange(0, 2);
+        } else if (randomEmoteFrame <= 13) {
+          // Maltese (Frames 6-13) -> Red-bow parachutes (Frames 3, 4, 5)
+          parachuteFrame = Utils.randomIntInRange(3, 5);
+        } else {
+          // Maltipoo (Frames 14-19) -> Fluffy cream-colored parachutes (Frames 6, 7, 8)
+          parachuteFrame = Utils.randomIntInRange(6, 8);
+        }
+        dropper.parachute.setFrame(parachuteFrame);
       } else {
-        // Maltipoo (Frames 14-19) -> Fluffy cream-colored parachutes (Frames 6, 7, 8)
-        parachuteFrame = Utils.randomIntInRange(6, 8);
+        dropper.parachute.setFrame(dropper.parachute.sheet.randomFrame());
       }
-      dropper.parachute.setFrame(parachuteFrame);
     }
 
     // 5% of the time, play the wilhelm scream sound as we're dropping into the

@@ -41,6 +41,11 @@
     // Dinamik Test Paneli Gizleme (OBS veya HTTP modlarında kaldırılır, local file:// veya ?test=true modunda görünür)
     const urlParams = new URLSearchParams(window.location.search);
     const showTest = urlParams.get('test') === 'true';
+    const currentTheme = urlParams.get('theme') || 'classic';
+    if (currentTheme === 'dog') {
+      document.body.classList.add('theme-dog');
+    }
+
     const isLocal = window.location.protocol === 'file:';
     const testPanel = document.getElementById('test-panel');
     if (!showTest && !isLocal && testPanel) {

@@ -266,11 +266,14 @@ div {
 /* This class is applied to the sprite that represents the emote being dropped;
  * it sets the sprite sheet image to be used. */
 .emote {
-  /*border: 1px dashed red;*/
   background-image: url(resources/images/emotes.png);
   width:  56px;
   height: 56px;
-  z-index: 1;
+  z-index: 100;
+}
+
+body.theme-dog .emote {
+  background-image: url(resources/images/emotes_dog.png);
 }
 
 /* This class is applied to a sprite that is using a twitch emote; in that case
@@ -288,18 +291,26 @@ div {
 /* This class is applied to the sprite that represents the parachute; it sets
  * the sprite sheet image to be used. */
 .parachute {
-  /*border: 1px dashed red;*/
   background-image: url(resources/images/parachutes.png);
   width:  120px;
   height: 120px;
   z-index: -1;
 }
 
+body.theme-dog .parachute {
+  background-image: url(resources/images/parachutes_dog.png);
+}
+
 .target {
   background-image: url(resources/images/target.png);
   width:  390px;
-  height: 150px;
+  height: 110px; /* Default target height */
   z-index: -10;
+}
+
+body.theme-dog .target {
+  background-image: url(resources/images/target_dog.png);
+  height: 150px; /* Dog theme target height */
 }
 
 /* Yatağın sol kenarından sarkan oyuncak kemik süsü */
@@ -310,6 +321,11 @@ div {
 }
 
 .target-bone-toy {
+  display: none; /* Only show in dog theme */
+}
+
+body.theme-dog .target-bone-toy {
+  display: block;
   background-image: url(resources/images/target_bone_toy.png);
   background-repeat: no-repeat;
   background-size: contain;
@@ -331,6 +347,11 @@ div {
 }
 
 .winner-crown {
+  display: none; /* Only show in dog theme */
+}
+
+body.theme-dog .winner-crown {
+  display: block;
   background-image: url(resources/images/winner_bone.png);
   background-repeat: no-repeat;
   background-size: contain;
@@ -345,7 +366,7 @@ div {
   animation: crownSwing 3s ease-in-out infinite; /* Hafif ve premium sallantı animasyonu */
 }
 
-.winner-crown.ghost {
+body.theme-dog .winner-crown.ghost {
   display: none !important;
 }
 
