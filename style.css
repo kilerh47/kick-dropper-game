@@ -315,32 +315,6 @@ body.theme-dog .target {
   height: 150px; /* Dog theme target height */
 }
 
-/* Yatağın sol kenarından sarkan oyuncak kemik süsü */
-@keyframes boneSwing {
-  0% { transform: rotate(-8deg); }
-  50% { transform: rotate(8deg); }
-  100% { transform: rotate(-8deg); }
-}
-
-.target-bone-toy {
-  display: none; /* Only show in dog theme */
-}
-
-body.theme-dog .target-bone-toy {
-  display: block;
-  background-image: url(resources/images/target_bone_toy.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 57px;
-  height: 40px;
-  position: absolute;
-  top: -10px; /* Görünür olması için yukarı alındı */
-  left: 30px;  /* Yatağın sol kenarına yakın */
-  z-index: 10;
-  transform-origin: 50% 0%; /* İpin bağlandığı üst-orta noktadan sarkaç sallantısı yapması için */
-  animation: boneSwing 2.8s ease-in-out infinite;
-}
-
 /* Şampiyon tacı (hafif sallantılı altın kemik) animasyonu ve stili */
 @keyframes crownPremiumFloat {
   0% { 

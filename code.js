@@ -246,11 +246,6 @@ class Target extends Sprite {
 
     // The droppers that are currently sitting on the target.
     this.droppers = [];
-
-    // Yatak süsü (sallanan oyuncak kemik) divini oluştur ve ekle
-    this.boneToy = document.createElement("div");
-    this.boneToy.className = "target-bone-toy";
-    this.element.appendChild(this.boneToy);
   }
 
   /* Add to the list of droppers that are currently sitting on top of the
