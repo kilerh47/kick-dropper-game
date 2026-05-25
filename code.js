@@ -43,7 +43,7 @@ class SpriteSheet {
 
   /* Randomly select a frame number from the count of available frames. */
   randomFrame() {
-    return Utils.randomIntInRange(0, this.spriteCount);
+    return Utils.randomIntInRange(0, this.spriteCount - 1);
   }
 
   /* For any valid frame number in this sprite sheet, return the X position in
@@ -157,19 +157,9 @@ class Entity {
     }
   }
 
-  /* Play the sound from the associated audio tag, optionally also setting the
-   * volume level for the playback. */
+  /* Sound support has been completely removed as per user request. */
   play(snd, volume, restart) {
-    return; // Sesler tamamen iptal edildi
-    if (restart === true) {
-      snd.currentTime = 0;
-    }
-
-    if (volume !== undefined) {
-      snd.volume = volume;
-    }
-
-    // snd.play(); iptal edildi
+    return;
   }
 
   /* Give this entity a chance to update its state, based on its own rules.
@@ -279,7 +269,7 @@ class Target extends Sprite {
     // Declare that a new dropper is the current winner of the game; play a
     // sound and trigger a notification to the back end that there's a new
     // dropper on the target and that it's a winner.
-    dropper.play(dropper.sndWinner, Config.WinnerVolume);
+
     dropper.transmitDropStatus(true, true);
 
     // Şampiyon tacını göster
@@ -411,20 +401,7 @@ class ParachuteDropper extends SpriteContainer {
       this.parachute.height * 0.5
     );
 
-    // Create the elements for all of the sounds that we're going to play; the
-    // tag attributes come from the configuration, to allow for sounds to be
-    // easily swapped out.
-    this.sndParachute = this.createAudioElement('Parachute');
-    this.sndSnip = this.createAudioElement('Snip');
-    this.sndBuzz = this.createAudioElement('Buzz');
-    this.sndLand = this.createAudioElement('Land');
-    this.sndWinner = this.createAudioElement('Winner');
-    this.sndScream = this.createAudioElement('Scream');
 
-    this.element.appendChild(this.sndParachute);
-    this.element.appendChild(this.sndLand);
-    this.element.appendChild(this.sndWinner);
-    this.element.appendChild(this.sndScream);
 
     // Make the children reposition themselves based on their parent so that they're
     // in the correct place to start with.
@@ -443,21 +420,7 @@ class ParachuteDropper extends SpriteContainer {
     this.randomize(name);
   }
 
-  /* Creates and returns an audio element set to play the sound configured by
-   * the configuration items with the given prefix value. */
-  createAudioElement(prefix) {
-    const element = document.createElement("audio");
 
-    element.src = Config[`${prefix}Sound`];
-    element.preservesPitch = Config[`${prefix}PitchPreserve`];
-
-    const rate = Config[`${prefix}Playback`];
-    if (rate !== null) {
-      element.playbackRate = Utils.randomFloatInRange(rate[0], rate[1]);
-    }
-
-    return element;
-  }
 
   /* Kills this entity by adding it to the entity pool, removing it from the DOM
    * and requesting that the render loop cull it from the list. */
@@ -650,7 +613,7 @@ class ParachuteDropper extends SpriteContainer {
       this.parachute.element.classList.toggle('deployChute');
 
       // Play a sound.
-      this.play(this.sndParachute, Config.ParachuteVolume);
+
     }
 
     // Start swaying now that the parachute is out.
@@ -662,7 +625,7 @@ class ParachuteDropper extends SpriteContainer {
   cut_chute() {
     if (this.cutRequested === true || this.y > Config.CutLockout) {
       if (this.landed === false) {
-        this.play(this.sndBuzz, Config.BuzzVolume);
+
       }
       return;
     }
@@ -670,7 +633,7 @@ class ParachuteDropper extends SpriteContainer {
     // Visibly make the emote drop slightly, and then play a sound to let the
     // players know that a cut is in progress.
     this.emote.element.classList.add('cut', 'cutDrop');
-    this.play(this.sndSnip, Config.SnipVolume);
+
 
     // Consider this chute cut now.
     this.cutRequested = true;
@@ -682,7 +645,7 @@ class ParachuteDropper extends SpriteContainer {
   land(deltaT) {
     // Mark that we've landed and play a sound.
     this.landed = true;
-    this.play(this.sndLand, Config.LandVolume);
+
 
     // Trigger visual landing impact splash
     const emoteX = this.x + this.emote.x;
@@ -1232,7 +1195,7 @@ class DropEngine {
     // 5% of the time, play the wilhelm scream sound as we're dropping into the
     // screen. The sound actually starts before the drop begins.
     if (Utils.randomFloatInRange(0, 1) >= 0.95) {
-      dropper.play(dropper.sndScream);
+
     }
 
     // Add this dropper to the global sprite list so that it will animate.

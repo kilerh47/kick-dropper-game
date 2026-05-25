@@ -338,9 +338,9 @@ div {
   height: 40px;
   position: absolute;
   left: 36px;
-  top: 25px; /* Puanın ve ismin üzerinde durması için yukarı alındı */
-  z-index: 5;
-  opacity: 0.95; /* Biraz daha belirginleştirildi */
+  top: 15px; /* Puanı baltalamaması için yukarı, tam score üstüne çıkarıldı */
+  z-index: 15; /* Diğer elementlerin önüne geçmesi için yüksek tutuldu */
+  opacity: 0.95;
   transform-origin: 50% 50%; /* Referans noktası tam orta kısım olacak şekilde ayarlandı */
   animation: crownSwing 3s ease-in-out infinite; /* Hafif ve premium sallantı animasyonu */
 }

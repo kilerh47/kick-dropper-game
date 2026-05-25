@@ -19,6 +19,10 @@
     <button id="btn-simulate-cut">Rastgele İp Kes (!kes)</button>
     <button id="btn-clear-scores" style="background-color: #8b3c3c !important;">Skorları Sıfırla</button>
     <button id="btn-clear-all">Temizle (Reset)</button>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+      <label for="bg-color-picker" style="color: white; font-size: 12px; font-family: Arial;">Arkaplan Test:</label>
+      <input type="color" id="bg-color-picker" value="#00ff00" style="width: 30px; height: 25px; border: none; padding: 0; cursor: pointer;">
+    </div>
   </div>
 
   <!-- Canlı Liderlik Tablosu Kartı -->
@@ -144,7 +148,12 @@
     });
 
     document.getElementById('btn-clear-all').addEventListener('click', () => {
+      engine.reset();
       engine.stopRenderLoop();
+    });
+
+    document.getElementById('bg-color-picker').addEventListener('input', (e) => {
+      document.body.style.backgroundColor = e.target.value;
     });
 
     document.getElementById('btn-clear-scores').addEventListener('click', () => {
