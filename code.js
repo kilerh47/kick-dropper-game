@@ -517,7 +517,12 @@ class ParachuteDropper extends SpriteContainer {
     // Set the initial speeds; we want to drop very fast with only a small amount of
     // left to right as we're coming into the screen.
     this.xSpeed = Utils.randomFloatInRange(3, 5);
-    this.ySpeed = Utils.randomFloatInRange(8, 10);
+    this.ySpeed = Utils.randomFloatInRange(8, 12);
+    
+    // Unique parachute physical properties
+    this.minYspeed = Utils.randomFloatInRange(0.4, 0.9);
+    this.brakeFriction = Utils.randomFloatInRange(1.03, 1.07);
+    this.mass = Utils.randomFloatInRange(0.8, 1.2);
 
     // this.x = 300;
     // this.y = 200;
@@ -680,10 +685,19 @@ class ParachuteDropper extends SpriteContainer {
     this.x += this.xSpeed;
     this.y += this.ySpeed;
 
+    // Apply horizontal friction to slowly return extreme xSpeeds to normal drifting speed (max 5)
+    if (Math.abs(this.xSpeed) > 5) {
+      this.xSpeed *= 0.98;
+    }
+
     // If we're past the braking height, slow down until we hit a good threshold;
     // this only applies if he chute hasn't been cut.
-    if (this.cutTriggered === false && this.y >= this.brakeHeight && this.ySpeed > 0.5) {
-      this.ySpeed /= 1.05;
+    if (this.cutTriggered === false && this.y >= this.brakeHeight) {
+      if (this.ySpeed > this.minYspeed) {
+        this.ySpeed /= this.brakeFriction;
+      } else if (this.ySpeed < this.minYspeed) {
+        this.ySpeed += 0.2; // Gravity pulls it back down if bumped up
+      }
     }
 
     // If the chute has been cut, then we need to increase ourselves to TERMINAL
@@ -1286,6 +1300,67 @@ class DropEngine {
       this.sprites[i].update(deltaT);
       if (this.sprites[i].dead) {
         this.sprites.splice(i, 1);
+      }
+    }
+
+    // --- Collision Detection for ParachuteDroppers ---
+    const activeDroppers = this.sprites.filter(s => s instanceof ParachuteDropper && !s.dead && !s.landed);
+    for (let i = 0; i < activeDroppers.length; i++) {
+      for (let j = i + 1; j < activeDroppers.length; j++) {
+        const d1 = activeDroppers[i];
+        const d2 = activeDroppers[j];
+        
+        // Emote collision centers (relative to container)
+        const d1EmoteX = d1.x + d1.emote.x;
+        const d1EmoteY = d1.y + d1.emote.y;
+        const d2EmoteX = d2.x + d2.emote.x;
+        const d2EmoteY = d2.y + d2.emote.y;
+
+        const d1MidX = d1EmoteX + d1.emote.width / 2;
+        const d1MidY = d1EmoteY + d1.emote.height / 2;
+        const d2MidX = d2EmoteX + d2.emote.width / 2;
+        const d2MidY = d2EmoteY + d2.emote.height / 2;
+
+        const dx = d2MidX - d1MidX;
+        const dy = d2MidY - d1MidY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Emote width is 56, so radius is 28. Min distance is 56.
+        const minDistance = 45; // Slightly forgiving collision box
+
+        if (distance < minDistance && distance > 0) {
+          // 1. Separate them so they don't stick
+          const overlap = minDistance - distance;
+          const nx = dx / distance;
+          const ny = dy / distance;
+          
+          // Mass ratio
+          const m1 = d1.mass || 1;
+          const m2 = d2.mass || 1;
+          const totalMass = m1 + m2;
+          
+          d1.x -= nx * (overlap * (m2 / totalMass));
+          d1.y -= ny * (overlap * (m2 / totalMass));
+          d2.x += nx * (overlap * (m1 / totalMass));
+          d2.y += ny * (overlap * (m1 / totalMass));
+
+          // 2. Elastic collision (velocity exchange along normal)
+          const v1n = d1.xSpeed * nx + d1.ySpeed * ny;
+          const v2n = d2.xSpeed * nx + d2.ySpeed * ny;
+          
+          const v1t = d1.xSpeed * -ny + d1.ySpeed * nx;
+          const v2t = d2.xSpeed * -ny + d2.ySpeed * nx;
+          
+          const restitution = 0.85; // Bounciness
+          
+          const newV1n = (v1n * (m1 - m2) + (2 * m2 * v2n)) / totalMass * restitution;
+          const newV2n = (v2n * (m2 - m1) + (2 * m1 * v1n)) / totalMass * restitution;
+
+          d1.xSpeed = newV1n * nx + v1t * -ny;
+          d1.ySpeed = newV1n * ny + v1t * nx;
+          d2.xSpeed = newV2n * nx + v2t * -ny;
+          d2.ySpeed = newV2n * ny + v2t * nx;
+        }
       }
     }
 
