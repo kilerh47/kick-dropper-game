@@ -385,20 +385,20 @@ class ParachuteDropper extends SpriteContainer {
     // parachute. It's horizontally centered and vertically 1/4 of it's own height
     // off the bottom, so that it overlaps the place where the parachute chords are.
     this.emote.setPos((parachuteSheet.spriteW / 2) - (emoteSheet.spriteW / 2),
-                       parachuteSheet.spriteH - Math.round(emoteSheet.spriteH / 4));
+                       parachuteSheet.spriteH - Math.round(emoteSheet.spriteH / 4) - 6);
 
     // Initialize the box that will store the name of this dropper; it should be
     // centered in the overall dropper.
     this.nameBox.setPos(
       (this.element.clientWidth / 2) - (this.nameBox.element.clientWidth / 2),
-      this.parachute.height * 0.666
+      (this.parachute.height * 0.666) - 6
     );
 
     // Like the name box, initialize the score box. The position is centered and
     // above the name, but has no initial value and will be populated later.
     this.scoreBox.setPos(
       (this.element.clientWidth / 2) - (this.scoreBox.element.clientWidth / 2),
-      this.parachute.height * 0.5
+      (this.parachute.height * 0.5) - 6
     );
 
 
@@ -649,7 +649,7 @@ class ParachuteDropper extends SpriteContainer {
 
     // Trigger visual landing impact splash
     const emoteX = this.x + this.emote.x;
-    engine.spawnImpact(emoteX + this.emote.width / 2, this.container.clientHeight - (0.25 * this.target.height));
+    engine.spawnImpact(emoteX + this.emote.width / 2, this.container.clientHeight - (0.18 * this.target.height));
 
     // Now that we have landed, we should no longer sway, and our parachute
     // should no longer be visible.
@@ -713,12 +713,12 @@ class ParachuteDropper extends SpriteContainer {
       this.xSpeed = -1 * this.xSpeed;
 
     // When we touch down, indicate that we've landed so that we stop updating,
-    if (emoteY >= this.container.clientHeight - this.emote.height - (0.25 * this.target.height)) {
+    if (emoteY >= this.container.clientHeight - this.emote.height - (0.18 * this.target.height)) {
       this.land(deltaT);
 
       // In order to be considered a winner, the emote's center must land
       // within the safe padding boundaries of the target dog bed.
-      const padding = 30;
+      const padding = 10;
       const emoteMidX = emoteX + this.emote.width / 2;
       if (emoteMidX >= this.target.x + padding && emoteMidX <= this.target.x + this.target.width - padding) {
         this.handleWin();
@@ -807,7 +807,7 @@ class ParachuteDropper extends SpriteContainer {
 
     // The maximum possible distance apart that the emote and the center of the
     // target can be under the new 30px safety padded boundary.
-    const padding = 30;
+    const padding = 10;
     const maxDist = (this.target.width / 2) - padding;
 
     // Calculate the score as a percentage of how far apart the two values are

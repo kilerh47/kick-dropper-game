@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Righteous&display=swap');
+
 body {
   margin: 0;
   padding: 0;
@@ -354,15 +356,16 @@ body.theme-dog .winner-crown {
   display: block;
   background-image: url(resources/images/winner_bone.png);
   background-repeat: no-repeat;
+  background-position: center center;
   background-size: contain;
-  width: 47px;
+  width: 48px; /* 36 (left) + 48 (width) + 36 (right) = 120px tam orta */
   height: 40px;
   position: absolute;
   left: 36px;
   top: 15px; /* Puanı baltalamaması için yukarı, tam score üstüne çıkarıldı */
   z-index: 15; /* Diğer elementlerin önüne geçmesi için yüksek tutuldu */
   opacity: 0.95;
-  transform-origin: 50% 50%; /* Referans noktası tam orta kısım olacak şekilde ayarlandı */
+  transform-origin: 50% 100%; /* Referans noktası alt-orta yapıldı, alttan sallanacak */
   animation: crownSwing 3s ease-in-out infinite; /* Hafif ve premium sallantı animasyonu */
 }
 
@@ -374,27 +377,30 @@ body.theme-dog .winner-crown.ghost {
  * is associated with a dropper while it's falling, or while it's marked as a
  * winner on the target. */
 .nickname {
-  font-family: 'Righteous', cursive;
+  font-family: 'Baloo 2', 'Righteous', cursive;
+  font-weight: 700;
   color: #ffcbdb; /* Senin pemben */
-  font-size: 16px;
+  font-size: 18px; /* Baloo 2 için boyut uygun */
   text-shadow: 2px 2px 0px #674746; /* Luna Koyu kahve gölge */
   text-align: center;
   vertical-align: middle;
   line-height: 24px;
-  height: 26px;
+  height: 34px; /* Padding eklendiği için yükseklik arttırıldı */
   width: 350px;
   
-  /* Modern Soft Glassmorphism */
+  /* Transparent Text-Only Mode */
   max-width: 180px;
   margin: 0 auto;
-  background: rgba(103, 71, 70, 0.75); /* Luna Koyu kahve arka plan */
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid #ffcbdb;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(103, 71, 70, 0.3);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  /* Stroke yerine dışarı taşan temiz solid (katı) gölgeler, rengi bozmaz */
+  text-shadow: 
+    -2px -2px 0 #4A2E2B, 0 -2px 0 #4A2E2B, 2px -2px 0 #4A2E2B, 2px 0 0 #4A2E2B, 
+     2px  2px 0 #4A2E2B, 0  2px 0 #4A2E2B, -2px 2px 0 #4A2E2B, -2px 0 0 #4A2E2B,
+     0px 4px 4px rgba(0,0,0,0.6);
   box-sizing: border-box;
-  padding: 0 10px;
+  padding: 4px 10px; /* Shadow'un kesilmesini önlemek için boşluk eklendi */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -403,23 +409,28 @@ body.theme-dog .winner-crown.ghost {
 /* This class is applied to the dic that is used to hold the visible score that
  * a dropper gets when it lands sucessfully on the target. */
 .score {
-  font-family: 'Righteous', cursive;
+  font-family: 'Baloo 2', 'Righteous', cursive;
+  font-weight: 700;
   color: #FFD9D1; /* Açık pastel krem */
-  font-size: 13px;
+  font-size: 15px;
   text-shadow: 1px 1px 0px #674746;
   text-align: center;
   vertical-align: middle;
   line-height: 18px;
-  height: 20px;
+  height: 28px;
   width: 80px;
   
-  /* Modern Soft Glassmorphism */
+  /* Transparent Text-Only Mode */
   max-width: 80px;
   margin: 0 auto;
-  background: rgba(103, 71, 70, 0.9);
-  border: 1px solid #fbc0b4;
-  border-radius: 10px;
+  background: transparent;
+  border: none;
+  text-shadow: 
+    -2px -2px 0 #4A2E2B, 0 -2px 0 #4A2E2B, 2px -2px 0 #4A2E2B, 2px 0 0 #4A2E2B, 
+     2px  2px 0 #4A2E2B, 0  2px 0 #4A2E2B, -2px 2px 0 #4A2E2B, -2px 0 0 #4A2E2B,
+     0px 4px 4px rgba(0,0,0,0.6);
   box-sizing: border-box;
+  padding: 4px 10px;
 }
 
 /* ==========================================================================
@@ -494,11 +505,9 @@ body.theme-dog .winner-crown.ghost {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(103, 71, 70, 0.85); /* Luna koyu kahve */
-  backdrop-filter: blur(8px);
-  border: 2px solid #ffcbdb; /* Senin pemben */
-  box-shadow: 0 0 25px rgba(180, 134, 125, 0.4);
-  border-radius: 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   padding: 14px 24px;
   width: 450px;
   z-index: 1000;
@@ -516,8 +525,9 @@ body.theme-dog .winner-crown.ghost {
 }
 
 .lobby-title {
-  font-family: 'Righteous', cursive;
-  font-size: 20px;
+  font-family: 'Baloo 2', 'Righteous', cursive;
+  font-weight: 700;
+  font-size: 22px;
   color: #ffcbdb; /* Senin pemben */
   text-shadow: 2px 2px 0px #674746;
   margin: 0;
@@ -550,6 +560,10 @@ body.theme-dog .winner-crown.ghost {
   justify-content: space-between;
   width: 100%;
   font-weight: bold;
+  text-shadow: 
+    -1px -1px 0 #4A2E2B, 0 -1px 0 #4A2E2B, 1px -1px 0 #4A2E2B, 1px 0 0 #4A2E2B, 
+     1px  1px 0 #4A2E2B, 0  1px 0 #4A2E2B, -1px 1px 0 #4A2E2B, -1px 0 0 #4A2E2B,
+     0px 2px 2px rgba(0,0,0,0.5);
 }
 
 .lobby-participants {
@@ -638,11 +652,9 @@ body.theme-dog .winner-crown.ghost {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(103, 71, 70, 0.85); /* Dark cocoa matching lobby bar */
-  backdrop-filter: blur(8px);
-  border: 2px solid #ffcbdb; /* Soft pink border */
-  box-shadow: 0 0 25px rgba(180, 134, 125, 0.4);
-  border-radius: 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   padding: 14px;
   width: 250px;
   z-index: 1000;
@@ -667,8 +679,9 @@ body.theme-dog .winner-crown.ghost {
 }
 
 .leaderboard-header {
-  font-family: 'Righteous', cursive;
-  font-size: 14px;
+  font-family: 'Baloo 2', 'Righteous', cursive;
+  font-weight: 700;
+  font-size: 16px;
   color: #ffcbdb;
   text-shadow: 1px 1px 0px #674746;
   text-align: center;
@@ -699,9 +712,9 @@ body.theme-dog .winner-crown.ghost {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 203, 219, 0.15);
-  border-radius: 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 203, 219, 0.3);
   padding: 6px 10px;
   transition: all 0.3s ease;
 }
@@ -713,14 +726,15 @@ body.theme-dog .winner-crown.ghost {
 }
 
 .leaderboard-row.rank-first {
-  background: rgba(255, 203, 219, 0.15); /* Highlight color */
-  border-color: rgba(255, 203, 219, 0.5);
-  box-shadow: 0 0 10px rgba(255, 203, 219, 0.2);
+  background: transparent; /* Highlight color */
+  border-color: rgba(255, 203, 219, 0.8);
+  box-shadow: none;
 }
 
 .leaderboard-rank {
-  font-family: 'Righteous', cursive;
-  font-size: 11px;
+  font-family: 'Baloo 2', 'Righteous', cursive;
+  font-weight: 700;
+  font-size: 13px;
   background: #b4867d; /* Soft dark peach */
   color: white;
   border-radius: 50%;
@@ -759,6 +773,9 @@ body.theme-dog .winner-crown.ghost {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 
+    -1px -1px 0 #4A2E2B, 0 -1px 0 #4A2E2B, 1px -1px 0 #4A2E2B, 1px 0 0 #4A2E2B, 
+     1px  1px 0 #4A2E2B, 0  1px 0 #4A2E2B, -1px 1px 0 #4A2E2B, -1px 0 0 #4A2E2B;
 }
 
 .rank-first .leaderboard-name {
@@ -766,12 +783,13 @@ body.theme-dog .winner-crown.ghost {
 }
 
 .leaderboard-score {
-  font-family: 'Righteous', cursive;
-  font-size: 11px;
+  font-family: 'Baloo 2', 'Righteous', cursive;
+  font-weight: 700;
+  font-size: 14px;
   color: #ffcbdb;
-  background: rgba(103, 71, 70, 0.9);
+  background: transparent;
   padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 203, 219, 0.2);
+  border: none;
+  text-shadow: 1px 1px 0px #674746;
   flex-shrink: 0;
 }
