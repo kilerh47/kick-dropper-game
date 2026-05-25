@@ -272,8 +272,9 @@ class Target extends Sprite {
 
     dropper.transmitDropStatus(true, true);
 
-    // Şampiyon tacını göster
-    if (dropper.winnerCrown) {
+    // Şampiyon tacını göster (Sadece tüm zamanların en yüksek skorunu geçmişse veya eşitse)
+    const isAllTimeHigh = engine.highScores.length === 0 || dropper.dropScore >= engine.highScores[0].score;
+    if (dropper.winnerCrown && isAllTimeHigh) {
       dropper.winnerCrown.classList.remove('ghost');
     }
   }
