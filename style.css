@@ -334,8 +334,8 @@ body.theme-dog .target-bone-toy {
   width: 57px;
   height: 40px;
   position: absolute;
-  top: 110px; /* Yatağın üst-sol tarafında sarkan ipin ucu yatak sınırına denk gelecek şekilde */
-  left: 20px;  /* Yatağın sol kenarına yakın */
+  top: -10px; /* Görünür olması için yukarı alındı */
+  left: 30px;  /* Yatağın sol kenarına yakın */
   z-index: 10;
   transform-origin: 50% 0%; /* İpin bağlandığı üst-orta noktadan sarkaç sallantısı yapması için */
   animation: boneSwing 2.8s ease-in-out infinite;
