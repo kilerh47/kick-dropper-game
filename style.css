@@ -342,10 +342,19 @@ body.theme-dog .target-bone-toy {
 }
 
 /* Şampiyon tacı (hafif sallantılı altın kemik) animasyonu ve stili */
-@keyframes crownSwing {
-  0% { transform: translateY(0) rotate(-3deg); }
-  50% { transform: translateY(-4px) rotate(3deg); }
-  100% { transform: translateY(0) rotate(-3deg); }
+@keyframes crownPremiumFloat {
+  0% { 
+    transform: translateY(0) scale(1) rotate(-2deg); 
+    filter: drop-shadow(0 0 2px rgba(255, 223, 0, 0.4));
+  }
+  50% { 
+    transform: translateY(-6px) scale(1.15) rotate(2deg); 
+    filter: drop-shadow(0 0 12px rgba(255, 223, 0, 0.95));
+  }
+  100% { 
+    transform: translateY(0) scale(1) rotate(-2deg); 
+    filter: drop-shadow(0 0 2px rgba(255, 223, 0, 0.4));
+  }
 }
 
 .winner-crown {
@@ -362,11 +371,11 @@ body.theme-dog .winner-crown {
   height: 40px;
   position: absolute;
   left: 36px;
-  top: 15px; /* Puanı baltalamaması için yukarı, tam score üstüne çıkarıldı */
+  top: 12px; /* Puanı baltalamaması için yukarı, tam score üstüne çıkarıldı */
   z-index: 15; /* Diğer elementlerin önüne geçmesi için yüksek tutuldu */
-  opacity: 0.95;
-  transform-origin: 50% 100%; /* Referans noktası alt-orta yapıldı, alttan sallanacak */
-  animation: crownSwing 3s ease-in-out infinite; /* Hafif ve premium sallantı animasyonu */
+  opacity: 1; /* Altın rengi soluk olmamalı, %100 net */
+  transform-origin: 50% 50%; /* Büyüyüp küçülme ve dönme merkezi tam orta yapıldı */
+  animation: crownPremiumFloat 2.5s ease-in-out infinite; /* Premium parlama ve uçma efekti */
 }
 
 body.theme-dog .winner-crown.ghost {
