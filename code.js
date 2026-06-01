@@ -1188,7 +1188,13 @@ class DropEngine {
       dropper.emote.element.style.backgroundImage = null;
 
       // Choose a standard emote frame
-      const randomEmoteFrame = dropper.emote.sheet.randomFrame();
+      let randomEmoteFrame = dropper.emote.sheet.randomFrame();
+      
+      if (name && name.toLowerCase() === 'aybuu') {
+        // Ensure aybuu always gets a Chihuahua (Frames 0-5)
+        randomEmoteFrame = Utils.randomIntInRange(0, 5);
+      }
+      
       dropper.emote.setFrame(randomEmoteFrame);
 
       if (Config.currentTheme === 'dog') {
