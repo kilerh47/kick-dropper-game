@@ -35,6 +35,7 @@
 
   <div id="viewport"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/8.3.0/pusher.min.js"></script>
+  <script src="tmi.min.js"></script>
   <script type="text/javascript" src="config.js"></script>
   <script type="text/javascript" src="code.js"></script>
   <script type="text/javascript">
@@ -52,8 +53,9 @@
       testPanel.remove();
     }
 
-    // Kick Kanal Bilgileri
-    const CHANNEL_NAME = 'beryybob'; // Buraya kendi kanal adınızı yazın
+    // Kanal Bilgileri
+    const KICK_CHANNEL = 'beryybob'; // Buraya kendi Kick kanal adınızı yazın
+    const TWITCH_CHANNEL = 'beryybob'; // Buraya kendi Twitch kanal adınızı yazın
     const COMMAND_DROP = '!atla';
     const COMMAND_CUT = '!kes';
     const COMMAND_LOBBY = '!topluatla'; // Yeni Battle Royale başlatma komutu
@@ -65,8 +67,8 @@
 
     async function connectKick() {
       try {
-        const res = await fetch(`https://kick.com/api/v1/channels/${CHANNEL_NAME}`);
-        if (!res.ok) throw new Error('Kanal bulunamadı: ' + CHANNEL_NAME);
+        const res = await fetch(`https://kick.com/api/v1/channels/${KICK_CHANNEL}`);
+        if (!res.ok) throw new Error('Kanal bulunamadı: ' + KICK_CHANNEL);
         const data = await res.json();
         const chatroomId = data.chatroom?.id;
         if (!chatroomId) throw new Error('Chatroom ID yok');
@@ -77,7 +79,7 @@
         });
 
         const ch = pusher.subscribe(`chatrooms.${chatroomId}.v2`);
-        console.log("Kick bağlantısı başarılı: " + CHANNEL_NAME);
+        console.log("Kick bağlantısı başarılı: " + KICK_CHANNEL);
 
         ch.bind('App\\Events\\ChatMessageEvent', msg => {
           const user = msg.sender?.username;
@@ -86,7 +88,7 @@
           if (BOTS.has(user.toLowerCase())) return;
 
           // Yetki kontrolü (Yayıncı veya Tanımlı Moderatörler)
-          const isAuthorized = (user.toLowerCase() === CHANNEL_NAME.toLowerCase()) || MODERATORS.has(user.toLowerCase());
+          const isAuthorized = (user.toLowerCase() === KICK_CHANNEL.toLowerCase()) || MODERATORS.has(user.toLowerCase());
 
           if (text.startsWith('!skorsifirla')) {
             if (isAuthorized) {
@@ -125,6 +127,64 @@
     }
 
     connectKick();
+
+    async function connectTwitch() {
+      try {
+        const client = new tmi.Client({
+          channels: [TWITCH_CHANNEL]
+        });
+
+        client.connect().then(() => {
+          console.log("Twitch bağlantısı başarılı: " + TWITCH_CHANNEL);
+        }).catch(err => {
+          console.error('Twitch bağlantı hatası:', err);
+        });
+
+        client.on('message', (channel, tags, message, self) => {
+          if (self) return;
+          const user = tags['display-name'] || tags.username;
+          const text = message.trim().toLowerCase();
+          
+          if (!user || !text) return;
+          if (BOTS.has(user.toLowerCase())) return;
+
+          // Yetki kontrolü (Yayıncı veya Tanımlı Moderatörler)
+          const isBroadcaster = tags.badges?.broadcaster === '1';
+          const isMod = tags.badges?.moderator === '1';
+          const isAuthorized = isBroadcaster || isMod || (user.toLowerCase() === TWITCH_CHANNEL.toLowerCase()) || MODERATORS.has(user.toLowerCase());
+
+          if (text.startsWith('!skorsifirla')) {
+            if (isAuthorized) {
+              engine.clearHighScores();
+            }
+          } else if (text.startsWith(COMMAND_LOBBY)) {
+            if (!engine.lobbyActive && isAuthorized) {
+              engine.startLobby();
+            }
+          } else if (text.startsWith(COMMAND_DROP)) {
+            engine.drop(user);
+          } else if (text.startsWith(COMMAND_RANDOM_CUT)) {
+            if (isAuthorized) {
+              engine.cutRandom();
+            }
+          } else if (text.startsWith(COMMAND_CUT)) {
+            const parts = message.trim().split(/\s+/);
+            if (parts.length > 1 && isAuthorized) {
+              const targetUser = parts[1].replace('@', '').trim();
+              if (targetUser) {
+                engine.cut(targetUser);
+              }
+            } else {
+              engine.cut(user);
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Twitch entegrasyon hatası:', e);
+      }
+    }
+
+    connectTwitch();
 
     // Developer Test Panel Olay Dinleyicileri
     const testNames = ["beryybob", "kilerh47", "chat_user", "paraşütçü", "atlayıcı", "uçan_emoji", "skydiver", "ninja", "gamer", "dropper"];
